@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# Playwright
+node_modules/
+test-results/
+playwright-report/
+.cache/
+
+# data
+data/raw/*.csv
+data/processed/*.csv
+
+# image output
+output/*.png
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# environment
+.env
