@@ -21,6 +21,7 @@ def plot_all(df, stats):
     # plot_price_vs_diff(df)
     plot_price_distribution(df)
     # plot_price_boxplot(df)
+    plot_type_distribution(stats)
 
     print("視覺化圖已產出")
     
@@ -191,3 +192,49 @@ def plot_price_distribution(df):
 #     plt.title("有無電子書版本的紙本價格分布比較")
 #     plt.savefig(f"{config.OUTPUT_DIR}/price_boxplot.png")
 #     plt.close()
+
+def plot_type_distribution(stats):
+    type_counts = stats["type_distribution"]
+    types = list(type_counts.keys())
+    counts = list(type_counts.values())
+
+    colors = plt.cm.Set2.colors
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+
+    # 繪製水平長條圖
+    bars = ax.barh(
+        types,
+        counts,
+        color=colors[2],
+        height=0.55,
+    )
+
+    # 圖表外觀與標籤設定
+    ax.set_title('書籍類型分布 (Top 10)')
+    ax.set_xlabel('書籍數量(本)')
+
+    # 讓數量最多的類型排在最上面
+    ax.invert_yaxis()
+
+    # 讓 X 軸範圍留點彈性，避免數值文字貼齊邊緣
+    ax.set_xlim(0, max(counts) * 1.15)
+
+    # 在每個長條右側自動加上數值標籤 (Data Labels)
+    for bar in bars:
+        width = bar.get_width()
+        ax.text(
+            width + 0.3,
+            bar.get_y() + bar.get_height()/2,
+            f'{width}',
+            va='center',
+            ha='left',
+        )
+
+    # 隱藏右側與上方的框線
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+    plt.tight_layout()
+    plt.savefig(f"{config.OUTPUT_DIR}/type_distribution_bar.png", dpi=150, bbox_inches='tight')
+    plt.close()

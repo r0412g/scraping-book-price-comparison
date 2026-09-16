@@ -35,7 +35,7 @@ def clean_data():
     print("清理完成，存成csv...")
 
     # save clean data to csv file
-    df.to_csv(save_data_path, index=False, encoding='utf-8-sig')
+    # df.to_csv(save_data_path, index=False, encoding='utf-8-sig')
 
     return df
 

@@ -9,6 +9,7 @@ def compute_stats(df):
     stats.update(price_diff_summary(df_has_ebook))
     stats.update(avg_price_comparison(df, df_has_ebook))
     stats["more_expensive_ebooks"] = more_expensive_ebooks(df_has_ebook)
+    stats["type_distribution"] = type_distribution(df)
     # print(stats)
 
     print("統計數據完成")
@@ -38,3 +39,15 @@ def more_expensive_ebooks(df_has_ebook):
         "pct": len(more_expensive) / len(df_has_ebook) * 100,
         "titles": more_expensive["title"].tolist(),
     }
+
+# 書本類型，抓前十大，剩餘為其他
+def type_distribution(df, top_n=10):
+    counts = df["type"].value_counts()
+
+    if len(counts) > top_n:
+        top_counts = counts.head(top_n)
+        # others_sum = counts.iloc[top_n:].sum()
+        # top_counts["其他"] = others_sum
+        counts = top_counts
+
+    return counts.to_dict()
