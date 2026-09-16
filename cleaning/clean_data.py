@@ -49,7 +49,7 @@ def paper_book_regex(df):
             df["paper_price"].astype(str).str.replace(r'\d+[\u4e00-\u9fa5]{1}', '', regex=True),
             errors="coerce"
         ), df["paper_price"]
-    )
+    ).astype(float)
 
     return df
 
