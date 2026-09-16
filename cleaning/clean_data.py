@@ -5,6 +5,9 @@ import config
 
 
 def clean_data():
+
+    print("===================== STEP 2: 清理資料 =====================")
+
     # fix Chinese width count
     pd.set_option('display.unicode.east_asian_width', True)
 
@@ -28,6 +31,8 @@ def clean_data():
 
     # price difference percentage between paper book and ebook
     df["price_diff_pct"] = (df["price_diff"] / df["paper_price"]) * 100
+
+    print("清理完成，存成csv...")
 
     # save clean data to csv file
     df.to_csv(save_data_path, index=False, encoding='utf-8-sig')

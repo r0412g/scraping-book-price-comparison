@@ -1,5 +1,7 @@
 def compute_stats(df):
 
+    print("===================== STEP 3: 統計數據 =====================")
+
     # df data which retain ebook data
     df_has_ebook = df[df["has_ebook"] == True]
 
@@ -8,6 +10,8 @@ def compute_stats(df):
     stats.update(avg_price_comparison(df, df_has_ebook))
     stats["more_expensive_ebooks"] = more_expensive_ebooks(df_has_ebook)
     # print(stats)
+
+    print("統計數據完成")
 
     return stats
 
