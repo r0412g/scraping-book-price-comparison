@@ -15,11 +15,6 @@ def scrape_books():
         # get data in relative page
         for page_num in range(1, 4):
 
-            # empty list
-            book_title_list = []
-            book_price_list = []
-            book_isbn_list = []
-
             if page_num == 1:
                 # go to page base url (page1)
                 page.goto(url)
@@ -32,13 +27,14 @@ def scrape_books():
             page.wait_for_selector(f'.item.active[data-position="{page_num}"]')
 
             # list of page
-            book_title_list = get_book_title(page, page_num)
-            book_price_list = get_book_price(page, page_num)
-            book_isbn_list = get_book_isbn(page, book_title_list, page_num)[0]
-            ebook_price_list = get_book_isbn(page, book_title_list, page_num)[1]
+            title_list = get_book_title(page, page_num)
+            paper_price_list = get_book_price(page, page_num)
+            isbn_list = get_book_information(page, title_list, page_num)[0]
+            ebook_price_list = get_book_information(page, title_list, page_num)[1]
+            type_list = get_book_information(page, title_list, page_num)[2]
 
             # zip list data to tuple
-            data_rows = zip(book_title_list, book_isbn_list, book_price_list, ebook_price_list)
+            data_rows = zip(title_list, type_list, isbn_list, paper_price_list, ebook_price_list)
 
             # write data into csv file
             write_data_to_csv(data_rows, page_num)
@@ -74,18 +70,19 @@ def get_book_price(page: Page, page_num: int) -> list:
     
     return price_and_discount_list
 
-''' get book ISBN'''
-def get_book_isbn(page: Page, book_title_list: list, page_num: int):
+''' get book ISBN and ebook price'''
+def get_book_information(page: Page, book_title_list: list, page_num: int):
 
     isbn_list = []
     ebook_price_list = []
+    type_list = []
             
-    # get ISBN in book's page
+    # get book's information in product page
     for book_title in book_title_list:
 
         # click button to redirect to book's product page
-        # page.get_by_role("link", name=f"{book_title}", description=f"{book_title}", exact=True).click()
         page.locator("a").filter(has_text=f"{book_title}").click()
+        # page.get_by_role("link", name=f"{book_title}", description=f"{book_title}", exact=True).click()
 
         # make sure enter product page
         page.wait_for_url("**product**")
@@ -101,6 +98,10 @@ def get_book_isbn(page: Page, book_title_list: list, page_num: int):
             ebook_price = 0
         ebook_price_list.append(ebook_price)
 
+        # get book's type
+        book_type = page.locator('nav[aria-label="breadcrumb"] a').nth(3).inner_text()
+        type_list.append(book_type)
+
         # go back to best sellers page
         page.go_back()
 
@@ -113,7 +114,7 @@ def get_book_isbn(page: Page, book_title_list: list, page_num: int):
         # make sure go back to best sellers page
         page.wait_for_url("**best-sellers**")
 
-    return isbn_list, ebook_price_list
+    return isbn_list, ebook_price_list, type_list
 
 
 ''' write book's data into books_paper.csv'''
@@ -126,7 +127,7 @@ def write_data_to_csv(data: tuple, page: int):
 
         # write header when on page 1
         if page == 1:
-            writer.writerow(['Title', 'ISBN', 'Paper book price', 'e-book price'])
+            writer.writerow(['title', 'type', 'ISBN', 'paper_price', 'ebook_price'])
 
         # write data into file
         writer.writerows(data)
